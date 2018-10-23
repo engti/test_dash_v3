@@ -25,32 +25,20 @@ shinyUI(
       suppressDependencies("bootstrap"),
       ## header
       h2(class = "ui header", "JCP Peak Dashboard"),
-      tabset(list(
+      tabset(
         list(
-          menu = div("KPI Trends"),
-          content = htmlOutput("kpi2")
-        ), 
-        list(
-          menu = div("Product Report"), 
-          content = div("Second content",
-                        uicards(class = "six",
-                                df1 %>% 
-                                  purrrlyr::by_row(~{
-                                    uicard(
-                                        div(
-                                            class = "content",
-                                            div(class = "header",paste0(.$`2018_visits`," ",.$channel)), 
-                                            div(class = "meta", paste("+/- from last year",.$change))
-                                            )
-                                          )
-                                  }) %>% {
-                                    .$.out
-                                  })
-                        )),
-        list(
-          menu = div("Marketing Channel"), 
-          content = div("Third content")
-          )
+          list(
+            menu = div("KPI Trends"),
+            content = htmlOutput("kpi2")
+          ), 
+          list(
+            menu = div("Product Report"), 
+            content = div("Second content")
+            ),
+          list(
+            menu = div("Marketing Channel"), 
+            content = div("Third content")
+            )
           )
         )
     )
