@@ -15,7 +15,7 @@ library(purrr)
 library(purrrlyr)
 
 ## read data
-df1 <- read_csv("aggregate_kpi.csv")
+# df1 <- read_csv("aggregate_kpi.csv")
 
 
 # Define UI for application that draws a histogram

@@ -4,6 +4,9 @@ library(shiny)
 library(shinyWidgets)
 library(shiny.semantic)
 library(stringi)
+library(dplyr)
+library(reshape2)
+library(scales)
 
 # Define server logic required to draw a histogram
 df_hour <- read_csv("hourlydata.csv")
