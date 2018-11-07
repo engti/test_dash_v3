@@ -7,6 +7,8 @@ library(stringi)
 library(dplyr)
 library(reshape2)
 library(scales)
+library(hrbrthemes)
+library(purrrlyr)
 
 # read data
 df_hour <- read_csv("hourlydata.csv")
@@ -103,7 +105,6 @@ shinyServer(function(input, output) {
         scale_y_comma(limits=c(0,max(tmp$`2018`)*1.2)) +
         coord_flip() +
         labs(x="",y="Visits",
-             title="Channel Visits",
              caption="Data from Adobe Analytics") + 
         theme_ipsum_rc(grid="X")
   })

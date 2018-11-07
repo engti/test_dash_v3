@@ -28,13 +28,18 @@ shinyUI(
       tabset(
         list(
           list(
-            menu = div("KPI Trends",id="myDiv"),
+            menu = div("KPI Totals",id="myDiv"),
             content = list(
               htmlOutput("kpi_boxes"),
-              div(class = "ui horizontal divider",  uiicon("tag"), "Channel Share & Trend Data"),
+              # div(class = "ui horizontal divider",  uiicon("tag"), "Channel Share & Trend Data"),
+              div(class = "ui divider"),
               div(class = "ui grid", 
-                  div(class = "six wide column", plotOutput("channel_share")),
-                  div(class = "ten wide column","Column")
+                  div(class = "six wide column",
+                      h4(class = "ui header", uiicon("mobile alternate icon"), div(class = "content","Visits by Channel")),
+                      plotOutput("channel_share")),
+                  div(class = "ten wide column",
+                      h4(class = "ui header", uiicon("chart line icon"), div(class = "content","Key Metric Trend"))
+                      )
                   )
               )
           ), 
