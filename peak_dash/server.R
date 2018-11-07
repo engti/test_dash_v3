@@ -9,6 +9,7 @@ library(reshape2)
 library(scales)
 library(hrbrthemes)
 library(purrrlyr)
+library(ggplot2)
 
 # read data
 df_hour <- read_csv("hourlydata.csv")
@@ -102,7 +103,7 @@ shinyServer(function(input, output) {
       ggplot(aes(reorder(name,`2018`),`2018`)) +
         geom_col() +
         geom_text(aes(label=scales::percent(change)), hjust=0, nudge_y=2000) +
-        scale_y_comma(limits=c(0,max(tmp$`2018`)*1.2)) +
+        scale_y_comma(limits=c(0,max(channel_total()$`2018`)*1.2)) +
         coord_flip() +
         labs(x="",y="Visits",
              caption="Data from Adobe Analytics") + 
