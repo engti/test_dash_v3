@@ -29,7 +29,7 @@ shinyUI(
         list(
           list(
             menu = div("KPI Trends"),
-            content = htmlOutput("kpi2")
+            content = htmlOutput("kpi_boxes")
           ), 
           list(
             menu = div("Product Report"), 

@@ -8,8 +8,11 @@ library(dplyr)
 library(reshape2)
 library(scales)
 
-# Define server logic required to draw a histogram
+# read data
 df_hour <- read_csv("hourlydata.csv")
+# define factos
+metric_levels <- c("Visits","Revenue","Orders","Orders per Visit","Average Order Value","$ per Visit")
+
 
 shinyServer(function(input, output) {
   
@@ -21,7 +24,14 @@ shinyServer(function(input, output) {
       group_by(reporting_year,metric) %>%
       summarise(value = sum(value)) %>%
       ungroup() %>%
-      dcast(metric ~ reporting_year,value.var = "value") %>%
+      dcast(reporting_year ~ metric,value.var = "value") %>%
+      mutate(
+        order_per_visit = orders / visits,
+        avg_ord_value = revenue / orders,
+        rev_per_visit = revenue / visits
+      ) %>%
+      melt(id.vars = "reporting_year") %>%
+      dcast(variable ~ reporting_year,value.var = "value") %>%
       mutate(
         change = (`2018` - `2017`) / `2017`,
         text = case_when(
@@ -29,38 +39,41 @@ shinyServer(function(input, output) {
           change < 0 ~ paste0(percent(change)," from same period last year"),
           change == 0 ~ paste0("unchanged from same period last year")
         )
-      )
+      ) %>%
+      mutate(
+        variable = case_when(
+          variable == "orders" ~ "Orders",
+          variable == "revenue" ~ "Revenue",
+          variable == "visits" ~ "Visits",
+          variable == "order_per_visit" ~ "Orders per Visit",
+          variable == "avg_ord_value" ~ "Average Order Value",
+          variable == "rev_per_visit" ~ "$ per Visit"
+        )
+      ) %>%
+      rename(metric = variable) %>%
+      mutate(
+        pretty_metric = case_when(
+          metric == "Orders" ~ formatC(`2018`,format="d", big.mark=","),
+          metric == "Revenue" ~ paste0("$",formatC(`2018`,format="d", big.mark=",")),
+          metric == "Visits" ~ formatC(`2018`,format="d", big.mark=","),
+          metric == "Orders per Visit" ~ paste0(sprintf(`2018`*100, fmt = '%#.2f'),"%"),
+          metric == "Average Order Value" ~ paste0("$",formatC(`2018`,format="d", big.mark=",")),
+          metric == "$ per Visit" ~ paste0("$",sprintf(`2018`, fmt = '%#.2f'))
+        ),
+        metric = factor(metric,levels = metric_levels)
+      ) %>%
+      arrange(metric)
   })
    
-  output$distPlot <- renderPlot({
-    
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[, 2] 
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    
-  })
   
-  output$kpi <- renderUI({
-    div(
-      uicard(
-        div(class = "six",
-            div(class = "header","127.18K"),
-            div(class = "description", "+5% from last year"),
-            div(class = "meta", "Visits"))
-      )
-    )
-  })
   
-  output$kpi2 <- renderUI({
-    uicards(class = "three",
+  output$kpi_boxes <- renderUI({
+    uicards(class = "six",
             kpi_data() %>% 
             purrrlyr::by_row(
               ~{uicard(
                 div(class = "content",
-                div(class = "header",formatC(.$`2018`,format="d", big.mark=",")),
+                div(class = "header",.$pretty_metric),
                 div(class = "description",stri_trans_totitle(.$metric)),
                 div(class = "meta",.$text)
                 ))
