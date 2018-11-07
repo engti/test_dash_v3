@@ -35,7 +35,7 @@ shinyServer(function(input, output) {
       mutate(
         change = (`2018` - `2017`) / `2017`,
         text = case_when(
-          change > 0 ~ paste0(percent(change)," from same period last year"),
+          change > 0 ~ paste0("+",percent(change)," from same period last year"),
           change < 0 ~ paste0(percent(change)," from same period last year"),
           change == 0 ~ paste0("unchanged from same period last year")
         )
@@ -65,8 +65,21 @@ shinyServer(function(input, output) {
       arrange(metric)
   })
    
+  channel_total <- reactive({
+    df_hour %>%
+      select(name,data_status,reporting_year,metric,value) %>%
+      filter(data_status == "current",metric=="visits") %>%
+      select(-data_status,-metric) %>%
+      group_by(name,reporting_year) %>%
+      summarise(visits = sum(value)) %>%
+      dcast(name~reporting_year,value.var = "visits") %>%
+      mutate(
+        change = (`2018` - `2017`) / `2017`
+      ) %>%
+      arrange(desc(`2018`))
+  })
   
-  
+  # outputs ----
   output$kpi_boxes <- renderUI({
     uicards(class = "six",
             kpi_data() %>% 
@@ -80,6 +93,19 @@ shinyServer(function(input, output) {
               }) %>% {
                 .$.out
               })
+  })
+  
+  output$channel_share <- renderPlot({
+    channel_total() %>%
+      ggplot(aes(reorder(name,`2018`),`2018`)) +
+        geom_col() +
+        geom_text(aes(label=scales::percent(change)), hjust=0, nudge_y=2000) +
+        scale_y_comma(limits=c(0,max(tmp$`2018`)*1.2)) +
+        coord_flip() +
+        labs(x="",y="Visits",
+             title="Channel Visits",
+             caption="Data from Adobe Analytics") + 
+        theme_ipsum_rc(grid="X")
   })
   
 })
