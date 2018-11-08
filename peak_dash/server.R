@@ -10,6 +10,7 @@ library(scales)
 library(hrbrthemes)
 library(purrrlyr)
 library(ggplot2)
+library(readr)
 
 # read data
 df_hour <- read_csv("hourlydata.csv")
