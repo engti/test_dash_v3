@@ -157,3 +157,38 @@
         change == 0 ~ paste0("unchanged from same period last year")
       )
      )
+  
+  ## trended channel and marketing channel data ---- 
+  ## trended channel data ---- 
+  df2_today <- QueueTrended(
+    reportsuite.id = rsid,
+    date.from = Sys.Date(),
+    date.to = Sys.Date(),
+    metrics = c("visits","orders","revenue"),
+    elements = c("evar44","lasttouchchannel"),
+    date.granularity = "hour",
+    selected = c("tablet","desktop","ios","android","mobile"),
+    top = 1000
+  )
+  
+  df2_lastyear <- QueueTrended(
+    reportsuite.id = rsid,
+    date.from = Sys.Date() - 365,
+    date.to = Sys.Date() - 365,
+    metrics = c("visits","orders","revenue"),
+    elements = c("evar44","lasttouchchannel"),
+    date.granularity = "hour",
+    selected = c("tablet","desktop","ios","android","mobile"),
+    top = 1000
+  )
+  
+  
+  df2_hour_trend <- rbind(df2_lastyear,df2_today) %>%
+    select(-starts_with("segment")) 
+
+  df2_hour_trend$datetime <- as.POSIXct(df2_hour_trend$datetime)
+  
+  df2_hour_trend <- df2_hour_trend %>%
+    mutate(reporting_year = unique(year(datetime))[1])
+  
+  tmp <- valid_hour(df2_hour_trend)

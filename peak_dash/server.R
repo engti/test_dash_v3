@@ -21,6 +21,7 @@ metric_levels <- c("Visits","Revenue","Orders","Orders per Visit","Average Order
 
 shinyServer(function(input, output) {
   
+  # data ----
   kpi_data <- reactive({
     df_kpi <- df_hour %>%
       select(reporting_year,data_status,metric,value) %>%
