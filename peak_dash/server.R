@@ -14,6 +14,7 @@ library(readr)
 
 # read data
 df_hour <- read_csv("hourlydata.csv")
+df_brand <- read_csv("product_family_data.csv")
 # define factos
 metric_levels <- c("Visits","Revenue","Orders","Orders per Visit","Average Order Value","$ per Visit")
 
@@ -83,6 +84,11 @@ shinyServer(function(input, output) {
       arrange(desc(`2018`))
   })
   
+  data_brand <- reactive({
+    df_brand %>%
+      select(hour,channel=evar44,brand=`evar6: Brand Name [v6]`,prod_view=event1,orders,revenue)
+  })
+  
   # outputs ----
   output$kpi_boxes <- renderUI({
     uicards(class = "six",
@@ -111,4 +117,16 @@ shinyServer(function(input, output) {
         theme_ipsum_rc(grid="X")
   })
   
+  output$chart_brand <- renderPlot({
+    data_brand()  %>%
+      mutate(brand = tolower(brand) ) %>%
+      ggplot(aes(x=reorder(brand,revenue),y=revenue)) +
+      geom_col() +
+      scale_y_continuous(labels = comma) +
+      theme_ipsum(grid="Y") +
+      labs(x="Revenue in $", y="Brands",
+           # title="Top Brands Today",
+           caption="Adobe Analytics Data") +
+      coord_flip()
+  })
 })

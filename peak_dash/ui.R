@@ -37,7 +37,10 @@ shinyUI(
                   div(class = "six wide column",
                       h4(class = "ui header", uiicon("mobile alternate icon"), div(class = "content","Visits by Channel")),
                       plotOutput("channel_share")),
-                  div(class = "ten wide column",
+                  div(class = "five wide column",
+                      h4(class = "ui header", uiicon("mobile alternate icon"), div(class = "content","Visits by Channel")),
+                      plotOutput("chart_brand")),
+                  div(class = "five wide column",
                       h4(class = "ui header", uiicon("chart line icon"), div(class = "content","Key Metric Trend"))
                       )
                   )
