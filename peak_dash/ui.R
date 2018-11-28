@@ -28,7 +28,7 @@ shinyUI(
       tabset(
         list(
           list(
-            menu = div("KPI Totals",id="myDiv"),
+            menu = div("KPI Totals",id="kpi_totals"),
             content = list(
               htmlOutput("kpi_boxes"),
               # div(class = "ui horizontal divider",  uiicon("tag"), "Channel Share & Trend Data"),

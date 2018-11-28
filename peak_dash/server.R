@@ -41,9 +41,9 @@ shinyServer(function(input, output) {
       mutate(
         change = (`2018` - `2017`) / `2017`,
         text = case_when(
-          change > 0 ~ paste0("+",percent(change)," from same period last year"),
-          change < 0 ~ paste0(percent(change)," from same period last year"),
-          change == 0 ~ paste0("unchanged from same period last year")
+          change > 0 ~ paste0("+",percent(change)," from same period last year."),
+          change < 0 ~ paste0(percent(change)," from same period last year."),
+          change == 0 ~ paste0("unchanged from same period last year.")
         )
       ) %>%
       mutate(
